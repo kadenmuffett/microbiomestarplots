@@ -11,6 +11,7 @@
 #' @param abundance_threshold A numeric value for abundance threshold.
 #' @param taxa_rank A character string. The taxonomic rank to use (e.g., "Genus").
 #' @param samplecolumn A character string. The name of the sample ID column.
+#' @param log_scale A logical value. If TRUE, applies a pseudo-log transformation to the y-axis.
 #' @param ... Additional arguments, e.g. "colors_all" passed to `plot_taxa_star`.
 #'
 #' @return A patchwork object containing the matrix of plots.
@@ -23,8 +24,8 @@
 #' @export
 #'
 #' @examples
-#' # plot_core_matrix(physeq, "Treatment", percent_samples = 0.5, taxa_rank = "Genus", samplecolumn = "SampleID")
-plot_core_matrix <- function(physeq, group_var, percent_samples, abundance_threshold = 0, taxa_rank, samplecolumn, ...) {
+#' # plot_core_matrix(physeq, "Treatment", percent_samples = 0.5, taxa_rank = "Genus", samplecolumn = "SampleID", log_scale = FALSE)
+plot_core_matrix <- function(physeq, group_var, percent_samples, abundance_threshold = 0, taxa_rank, samplecolumn, log_scale = FALSE, ...) {
     # --- 1. Input Validation ---
 
     if (!inherits(physeq, "phyloseq")) {
@@ -163,7 +164,11 @@ plot_core_matrix <- function(physeq, group_var, percent_samples, abundance_thres
     if (global_max_y > 0) {
         for (g in names(plots)) {
             if (inherits(plots[[g]], "ggplot") && !is.null(plots[[g]]$data) && nrow(plots[[g]]$data) > 0) {
-                plots[[g]] <- plots[[g]] + ggplot2::scale_y_continuous(limits = c(0, global_max_y))
+                if (log_scale) {
+                    plots[[g]] <- plots[[g]] + ggplot2::scale_y_continuous(trans = scales::pseudo_log_trans(sigma = 0.01), limits = c(0, global_max_y))
+                } else {
+                    plots[[g]] <- plots[[g]] + ggplot2::scale_y_continuous(limits = c(0, global_max_y))
+                }
             }
         }
     }
