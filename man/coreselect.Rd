@@ -4,7 +4,7 @@
 \alias{coreselect}
 \title{Select and Plot Core Microbiome}
 \usage{
-coreselect(physeq, group_var, percent_samples, abundance_threshold = 0)
+coreselect(physeq, group_var, percent_samples = 0.95, abundance_threshold = 0)
 }
 \arguments{
 \item{physeq}{A phyloseq object containing your microbiome data.}

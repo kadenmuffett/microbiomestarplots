@@ -141,8 +141,34 @@ plot_core_matrix <- function(physeq, group_var, percent_samples, abundance_thres
                 ggtitle(paste("No Unique Core:", g))
         }
     }
+    # --- 6. Global Scaling ---
 
-    # --- 6. Combine Plots ---
+    # Calculate global maximum value for radial axis across all generated star plots
+    global_max_y <- 0
+    for (p in plots) {
+        if (inherits(p, "ggplot") && !is.null(p$data) && nrow(p$data) > 0) {
+            pb <- ggplot2::ggplot_build(p)
+            for (layer_data in pb$data) {
+                if ("ymax" %in% names(layer_data)) {
+                    global_max_y <- max(global_max_y, max(layer_data$ymax, na.rm = TRUE), na.rm = TRUE)
+                }
+                if ("y" %in% names(layer_data)) {
+                    global_max_y <- max(global_max_y, max(layer_data$y, na.rm = TRUE), na.rm = TRUE)
+                }
+            }
+        }
+    }
+
+    # Apply global maximum limit to all valid plots to ensure scales are consistent
+    if (global_max_y > 0) {
+        for (g in names(plots)) {
+            if (inherits(plots[[g]], "ggplot") && !is.null(plots[[g]]$data) && nrow(plots[[g]]$data) > 0) {
+                plots[[g]] <- plots[[g]] + ggplot2::scale_y_continuous(limits = c(0, global_max_y))
+            }
+        }
+    }
+
+    # --- 7. Combine Plots ---
 
     final_plot <- patchwork::wrap_plots(plots, nrow = 1)
 

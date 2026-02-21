@@ -26,7 +26,7 @@
 #' @examples
 #' # data(GlobalPatterns)
 #' # coreselect(GlobalPatterns, "SampleType", percent_samples = 50, abundance_threshold = 0)
-coreselect <- function(physeq, group_var, percent_samples, abundance_threshold = 0) {
+coreselect <- function(physeq, group_var, percent_samples = 0.95, abundance_threshold = 0) {
     # --- 1. Input Validation ---
 
     if (!inherits(physeq, "phyloseq")) {
@@ -77,8 +77,11 @@ coreselect <- function(physeq, group_var, percent_samples, abundance_threshold =
 
         if (length(samples_in_group) == 0) next
 
-        # Prune physeq object to just taxa and samples within group
+        # Prune physeq object to just these samples
+        # We use prune_samples.
         physeq_sub <- phyloseq::prune_samples(samples_in_group, physeq)
+
+        # Remove taxa not present in any sample of this subset (optional, but speeds up calc)
         physeq_sub <- phyloseq::prune_taxa(phyloseq::taxa_sums(physeq_sub) > 0, physeq_sub)
 
         if (phyloseq::ntaxa(physeq_sub) == 0) {
@@ -125,7 +128,6 @@ coreselect <- function(physeq, group_var, percent_samples, abundance_threshold =
 
     # Get all unique core taxa across all groups
     all_core_taxa <- unique(unlist(core_list))
-    message("I have found the following taxa as core members in one or more groups:", all_core_taxa)
 
     # Create a data frame for plotting
     # We want a grid of (Taxon, Group) -> Present/Absent
@@ -156,7 +158,7 @@ coreselect <- function(physeq, group_var, percent_samples, abundance_threshold =
     # --- 4. Plotting ---
 
     p <- ggplot(plot_data_present, aes(x = Group, y = Taxon)) +
-        geom_point(size = 4) +
+        geom_point(size = 3) +
         theme_bw() + # Clean theme
         labs(
             title = paste0("Core Microbiome (Prevalence >= ", percent_samples * 100, "%)"),
