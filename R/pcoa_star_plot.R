@@ -34,7 +34,7 @@
 #' #     fill_alpha = 0.2,
 #' #     distance = "bray"
 #' #    )
-#' # }
+#' #
 plot_pcoa_star <- function(physeq, sample_var, colors_all, view_type = "together", error_bar = "IQR", fill_alpha = 0.4, distance) {
 
   # --- 1. Input Validation ---

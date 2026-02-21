@@ -4,7 +4,16 @@
 \alias{plot_taxa_star}
 \title{Plot a Star Plot of Relative Abundance for Three Taxa}
 \usage{
-plot_taxa_star(physeq, sample_var, taxa_rank, taxa_names)
+plot_taxa_star(
+  physeq,
+  sample_var,
+  taxa_rank,
+  taxa_names = NULL,
+  colors_all,
+  samplecolumn,
+  error_bar = "IQR",
+  fill_alpha = 0.4
+)
 }
 \arguments{
 \item{physeq}{A phyloseq object containing your microbiome data.}
@@ -16,7 +25,15 @@ to use for faceting (e.g., "location", "treatment").}
 names for (e.g., "Phylum", "Genus").}
 
 \item{taxa_names}{A character vector containing the names of the three specific
-taxa you want to plot.}
+taxa you want to plot. If NULL (default), the top 4 most abundant taxa are selected.}
+
+\item{samplecolumn}{This is the ID column for your samples.}
+
+\item{error_bar}{A character string, one of "IQR" (default), "SE", or "none".
+Determines the type of error bars to display.}
+
+\item{fill_alpha}{A numeric value between 0 and 1 (default 0.4).
+Controls the transparency of the polygon fill under the star plot.}
 }
 \value{
 A ggplot object representing the star plot.
@@ -26,19 +43,22 @@ This function generates a star (radar) plot showing the relative abundance
 of three specified taxa plus an "Other" category, faceted by a sample variable.
 }
 \examples{
-# This example won't run unless you have the 'GlobalPatterns' dataset loaded
-# if (requireNamespace("phyloseq", quietly = TRUE)) {
-#   data(GlobalPatterns)
-#
-#   # Prune to a manageable size for example
-#   gp_subset <- prune_samples(sample_sums(GlobalPatterns) > 500000, GlobalPatterns)
-#   gp_subset <- prune_taxa(taxa_sums(gp_subset) > 0, gp_subset)
-#
+# ...
 #   plot_taxa_star(
 #     physeq = gp_subset,
 #     sample_var = "SampleType",
 #     taxa_rank = "Phylum",
-#     taxa_names = c("Firmicutes", "Bacteroidetes", "Proteobacteria")
+#     # taxa_names = c("Firmicutes", "Bacteroidetes"), # Optional
+#     samplecolumn = "Sample_ID",
+#     error_bar = "SE",
+#     fill_alpha = 0.2
 #    )
-# }
+#
+
+# Example with a Data Frame
+# ...
+# plot_taxa_star(
+#   ...
+#   error_bar = "none"
+# )
 }
