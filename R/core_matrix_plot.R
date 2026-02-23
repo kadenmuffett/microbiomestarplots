@@ -126,6 +126,7 @@ plot_core_matrix <- function(physeq, group_var, percent_samples, abundance_thres
                 taxa_rank = taxa_rank,
                 taxa_names = u_core,
                 samplecolumn = samplecolumn,
+                log_scale = log_scale,
                 ...
             )
 

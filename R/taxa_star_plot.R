@@ -16,6 +16,7 @@
 #' @param samplecolumn This is the ID column for your samples.
 #' @param fill_alpha A numeric value between 0 and 1 (default 0.4).
 #'   Controls the transparency of the polygon fill under the star plot.
+#' @param log_scale A logical value. If TRUE, applies a pseudo-log transformation to the y-axis.
 #'
 #' @return A ggplot object representing the star plot.
 #'
@@ -44,7 +45,7 @@
 #' #   ...
 #' #   error_bar = "none"
 #' # )
-plot_taxa_star <- function(physeq, sample_var, taxa_rank, taxa_names = NULL, colors_all, samplecolumn, error_bar = "IQR", fill_alpha = 0.4) {
+plot_taxa_star <- function(physeq, sample_var, taxa_rank, taxa_names = NULL, colors_all, samplecolumn, error_bar = "IQR", fill_alpha = 0.4, log_scale = FALSE) {
   # --- 1. Input Validation and Conversion ---
 
   # Check if input is a data frame and convert to phyloseq if necessary
@@ -209,6 +210,10 @@ plot_taxa_star <- function(physeq, sample_var, taxa_rank, taxa_names = NULL, col
   } else if (error_bar == "SE") {
     star_plot <- star_plot +
       geom_errorbar(aes(ymin = SE_Min, ymax = SE_Max), width = 0.2, show.legend = FALSE)
+  }
+
+  if (log_scale) {
+    star_plot <- star_plot + scale_y_continuous(trans = scales::pseudo_log_trans(sigma = 0.01))
   }
 
   return(star_plot)
