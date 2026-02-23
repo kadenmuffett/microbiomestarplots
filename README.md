@@ -27,7 +27,7 @@ Generates a facet matrix displaying the "unique core" ASVs across groups. Shows 
 
 ### `coreselect()`
 Provides a presence/absence comparison tool for assessing the core microbiome thresholds across various groupings within your phyloseq object. This tool is exploratory and can be used for selection of appropriate taxa for plot_taxa_star() or to assess the appropriateness of plot_core_matrix() for your data.
-
+### *Please access the vignette to test it out, as it includes data appropriate for plot_core_matrix and coreselect, GlobalPatterns is not.*
 ## Examples
 
 ```r
