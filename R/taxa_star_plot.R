@@ -17,12 +17,14 @@
 #' @param fill_alpha A numeric value between 0 and 1 (default 0.4).
 #'   Controls the transparency of the polygon fill under the star plot.
 #' @param log_scale A logical value. If TRUE, applies a pseudo-log transformation to the y-axis.
+#' @param plot_order A character vector for custom ordering of the sample variable, "hclust" for Ward's clustering based on Euclidean distance, or NULL (default) for alphabetical.
 #'
 #' @return A ggplot object representing the star plot.
 #'
 #' @import phyloseq
 #' @import ggplot2
 #' @import dplyr
+#' @import vegan
 #'
 #' @export
 #'
@@ -45,7 +47,7 @@
 #' #   ...
 #' #   error_bar = "none"
 #' # )
-plot_taxa_star <- function(physeq, sample_var, taxa_rank, taxa_names = NULL, colors_all, samplecolumn, error_bar = "IQR", fill_alpha = 0.4, log_scale = FALSE) {
+plot_taxa_star <- function(physeq, sample_var, taxa_rank = "OTU", taxa_names = NULL, colors_all, samplecolumn, error_bar = "IQR", fill_alpha = 0.4, log_scale = FALSE, plot_order = NULL) {
   # --- 1. Input Validation and Conversion ---
 
   # Check if input is a data frame and convert to phyloseq if necessary
@@ -98,6 +100,19 @@ plot_taxa_star <- function(physeq, sample_var, taxa_rank, taxa_names = NULL, col
   if (!inherits(physeq, "phyloseq")) {
     stop("Error: 'physeq' must be a VALID phyloseq object or a data frame.")
   }
+
+  # Check for NAs in the OTU table and remove offending samples
+  otu_mat <- as(phyloseq::otu_table(physeq), "matrix")
+  if (any(is.na(otu_mat))) {
+    warning("NAs found. Removing offending samples.")
+    if (phyloseq::taxa_are_rows(physeq)) {
+      valid_samples <- colnames(otu_mat)[!apply(is.na(otu_mat), 2, any)]
+    } else {
+      valid_samples <- rownames(otu_mat)[!apply(is.na(otu_mat), 1, any)]
+    }
+    physeq <- phyloseq::prune_samples(valid_samples, physeq)
+  }
+
   if (!sample_var %in% phyloseq::sample_variables(physeq)) {
     stop("Error: '", sample_var, "' is not a valid sample variable in the phyloseq object/data frame.")
   }
@@ -173,6 +188,25 @@ plot_taxa_star <- function(physeq, sample_var, taxa_rank, taxa_names = NULL, col
       SE_Min = mean_Abundance - SE_Abundance,
       SE_Max = mean_Abundance + SE_Abundance
     )
+
+  # --- 3b. Plot Ordering ---
+  if (!is.null(plot_order)) {
+    if (length(plot_order) == 1 && plot_order == "hclust") {
+      # Calculate hclust
+      wide_df <- df_grouped_2 %>%
+        dplyr::select(!!sym(sample_var), Taxa_Group, mean_Abundance) %>%
+        tidyr::pivot_wider(names_from = Taxa_Group, values_from = mean_Abundance, values_fill = list(mean_Abundance = 0))
+
+      dist_mat <- vegan::vegdist(wide_df %>% dplyr::select(-!!sym(sample_var)), method = "bray")
+      hc <- stats::hclust(dist_mat, method = "complete")
+      ordered_groups <- wide_df[[sample_var]][hc$order]
+
+      df_grouped_2[[sample_var]] <- factor(df_grouped_2[[sample_var]], levels = ordered_groups)
+    } else {
+      # Custom order provided by user
+      df_grouped_2[[sample_var]] <- factor(df_grouped_2[[sample_var]], levels = plot_order)
+    }
+  }
 
   # --- 4. Plotting ---
 

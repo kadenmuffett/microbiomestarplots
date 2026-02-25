@@ -13,12 +13,15 @@
 #' @param fill_alpha A numeric value between 0 and 1 (default 0.4).
 #'   Controls the transparency of the polygon fill under the star plot.
 #' @param distance An accepted phyloseq ordination type ("bray" for example)
+#' @param plot_order A character vector for custom ordering of the sample variable, "hclust" for Ward's clustering based on Euclidean distance, or NULL (default) for alphabetical.
 #'
 #' @return A ggplot object representing the star plot of PCoA centroids.
 #'
 #' @import phyloseq
 #' @import ggplot2
 #' @import dplyr
+#' @import vegan
+#'
 #' @importFrom stats as.formula sd quantile
 #'
 #' @export
@@ -35,8 +38,7 @@
 #' #     distance = "bray"
 #' #    )
 #' #
-plot_pcoa_star <- function(physeq, sample_var, colors_all, view_type = "together", error_bar = "IQR", fill_alpha = 0.4, distance) {
-
+plot_pcoa_star <- function(physeq, sample_var, colors_all, view_type = "together", error_bar = "IQR", fill_alpha = 0.4, distance, plot_order = NULL) {
   # --- 1. Input Validation ---
   if (!inherits(physeq, "phyloseq")) {
     stop("Error: 'physeq' must be a VALID phyloseq object.")
@@ -131,6 +133,25 @@ plot_pcoa_star <- function(physeq, sample_var, colors_all, view_type = "together
   # Ensure Axis order is preserved
   pcoa_stats$Axis <- factor(pcoa_stats$Axis, levels = axis_labels)
 
+  # --- 3b. Plot Ordering ---
+  if (!is.null(plot_order)) {
+    if (length(plot_order) == 1 && plot_order == "hclust") {
+      # Calculate hclust
+      wide_df <- pcoa_stats %>%
+        dplyr::select(!!sym(sample_var), Axis, Mean_Position) %>%
+        tidyr::pivot_wider(names_from = Axis, values_from = Mean_Position, values_fill = list(Mean_Position = 0))
+
+      dist_mat <- vegan::vegdist(wide_df %>% dplyr::select(-!!sym(sample_var)), method = "bray")
+      hc <- stats::hclust(dist_mat, method = "complete")
+      ordered_groups <- wide_df[[sample_var]][hc$order]
+
+      pcoa_stats[[sample_var]] <- factor(pcoa_stats[[sample_var]], levels = ordered_groups)
+    } else {
+      # Custom order provided by user
+      pcoa_stats[[sample_var]] <- factor(pcoa_stats[[sample_var]], levels = plot_order)
+    }
+  }
+
   # --- 4. Plotting ---
 
   # Handle default colors if missing
@@ -140,12 +161,15 @@ plot_pcoa_star <- function(physeq, sample_var, colors_all, view_type = "together
   }
 
   title_suffix <- switch(error_bar,
-                         "IQR" = " with IQR",
-                         "SE" = " with SE",
-                         "none" = "")
+    "IQR" = " with IQR",
+    "SE" = " with SE",
+    "none" = ""
+  )
 
-  star_plot <- ggplot(pcoa_stats, aes(x = Axis, y = Mean_Position, group = !!sym(sample_var),
-                                     color = !!sym(sample_var), fill = !!sym(sample_var))) +
+  star_plot <- ggplot(pcoa_stats, aes(
+    x = Axis, y = Mean_Position, group = !!sym(sample_var),
+    color = !!sym(sample_var), fill = !!sym(sample_var)
+  )) +
     geom_polygon(aes(), size = 1, alpha = fill_alpha) +
     scale_fill_manual(values = colors_all) +
     scale_color_manual(values = colors_all) +
