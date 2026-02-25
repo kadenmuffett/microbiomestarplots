@@ -14,10 +14,8 @@ The `microbiomeplots` package provides unique visualization techniques for micro
 ## Installation
 
 You can install the development version of `microbiomeplots` from GitHub with:
-As an alternative, you can install with BiocManager.
 ``` r
-# install.packages("devtools")
-devtools::install_github("kadenmuffett/microbiomestarplots")
+BiocManager::install("kadenmuffett/microbiomestarplots")
 ```
 
 ## Features
