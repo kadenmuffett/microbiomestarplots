@@ -5,6 +5,12 @@
 
 The `microbiomeplots` package provides unique visualization techniques for microbiome data using `phyloseq` and `microViz`. Its flagship features involve replacing standard points or bars with "star" (radar) plots that show the relative abundance of core taxa or any taxa of interest. These multi-dimensional shapes can be projected onto PCoA plots or arranged in core matrices to easily visualize differences in community structures across samples or treatments (up to 4 groups/treatments for comparative core matrices).
 
+<img width="1315" height="747" alt="image" src="https://github.com/user-attachments/assets/f33bea51-a39e-47d6-9680-9a998c4c031b" />
+*Enterotypes plotted using data from cvanmf (plot_taxa_star())*
+<img width="1315" height="747" alt="image" src="https://github.com/user-attachments/assets/89dd71a7-bb12-43b5-979c-83a2a9a43128" />
+*PCoA axes plotted using data from the GlobalPatterns dataset (plot_pcoa_star())*
+
+
 ## Installation
 
 You can install the development version of `microbiomeplots` from GitHub with:
