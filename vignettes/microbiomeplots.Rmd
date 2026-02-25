@@ -31,7 +31,7 @@ library(microViz)
 data(GlobalPatterns)
 # Filter down to speed up example vignettes
 # Subset to a smaller physeq for demonstration, fix taxa with microViz
-gp <- subset_samples(GlobalPatterns, SampleType %in% c("Feces", "Skin", "Tongue"))
+gp <- subset_samples(GlobalPatterns, SampleType %in% c("Feces", "Skin", "Tongue", "Freshwater", "Mock"))
 gp <- gp %>% tax_fix()
 # Only taxa without zero counts remain
 gp <- subset_taxa(gp, taxa_sums(gp) > 0)
