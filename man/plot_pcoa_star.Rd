@@ -11,7 +11,9 @@ plot_pcoa_star(
   view_type = "together",
   error_bar = "IQR",
   fill_alpha = 0.4,
-  distance
+  log_scale = FALSE,
+  plot_order = NULL,
+  distance = "bray"
 )
 }
 \arguments{

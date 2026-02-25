@@ -7,12 +7,14 @@
 plot_taxa_star(
   physeq,
   sample_var,
-  taxa_rank,
+  taxa_rank = "OTU",
   taxa_names = NULL,
   colors_all,
   samplecolumn,
   error_bar = "IQR",
-  fill_alpha = 0.4
+  fill_alpha = 0.4,
+  log_scale = FALSE,
+  plot_order = NULL
 )
 }
 \arguments{
@@ -34,6 +36,10 @@ Determines the type of error bars to display.}
 
 \item{fill_alpha}{A numeric value between 0 and 1 (default 0.4).
 Controls the transparency of the polygon fill under the star plot.}
+
+\item{log_scale}{A logical value. If TRUE, applies a pseudo-log transformation to the y-axis.}
+
+\item{plot_order}{A character vector for custom ordering of the sample variable, "hclust" for Ward's clustering based on Euclidean distance, or NULL (default) for alphabetical.}
 }
 \value{
 A ggplot object representing the star plot.

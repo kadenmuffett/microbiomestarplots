@@ -37,7 +37,9 @@
 #' #     # taxa_names = c("Firmicutes", "Bacteroidetes"), # Optional
 #' #     samplecolumn = "Sample_ID",
 #' #     error_bar = "SE",
-#' #     fill_alpha = 0.2
+#' #     fill_alpha = 0.2,
+#' #     log_scale = FALSE,
+#' #     plot_order = NULL
 #' #    )
 #' #
 #'
@@ -192,6 +194,7 @@ plot_taxa_star <- function(physeq, sample_var, taxa_rank = "OTU", taxa_names = N
   # --- 3b. Plot Ordering ---
   if (!is.null(plot_order)) {
     if (length(plot_order) == 1 && plot_order == "hclust") {
+      message("Calculating hclust for plot ordering using Bray-Curtis distance and complete linkage...")
       # Calculate hclust
       wide_df <- df_grouped_2 %>%
         dplyr::select(!!sym(sample_var), Taxa_Group, mean_Abundance) %>%
@@ -227,10 +230,13 @@ plot_taxa_star <- function(physeq, sample_var, taxa_rank = "OTU", taxa_names = N
   )
 
   # Create the star plot
-  star_plot <- ggplot(df_grouped_2, aes(x = Taxa_Group, y = mean_Abundance, group = !!sym(sample_var), fill = !!sym(sample_var), color = !!sym(sample_var))) +
+  star_plot <- ggplot(df_grouped_2, aes(
+    x = Taxa_Group, y = mean_Abundance, group = !!sym(sample_var),
+    fill = !!sym(sample_var), color = !!sym(sample_var)
+  )) +
     geom_polygon(aes(), size = 1, show.legend = FALSE, alpha = fill_alpha) +
-    scale_fill_manual(values = c(colors_all)) +
-    scale_color_manual(values = c(colors_all)) +
+    scale_fill_manual(values = colors_all) +
+    scale_color_manual(values = colors_all) +
     theme_minimal() +
     labs(
       title = paste0("Relative Abundance of Key Taxa", title_suffix),
