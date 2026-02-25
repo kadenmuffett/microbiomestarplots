@@ -98,10 +98,10 @@ tryCatch(
         # Force G3 to have only 1 unique
         # We can just run it on a subset or high threshold
         print("Testing warning conditions...")
-        # If we set percent_samples = 1.0, maybe some drop out?
     },
     error = function(e) {
         print(paste("Verification FAILED with error:", e$message))
         traceback()
     }
 )
+
