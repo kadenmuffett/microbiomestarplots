@@ -212,7 +212,11 @@ plot_taxa_star <- function(physeq, sample_var, taxa_rank = "OTU", taxa_names = N
 
   # Handle default colors if missing
   if (missing(colors_all)) {
-    groups <- as.character(unique(df_grouped_2[[sample_var]]))
+    if (is.factor(df_grouped_2[[sample_var]])) {
+      groups <- levels(df_grouped_2[[sample_var]])
+    } else {
+      groups <- as.character(unique(df_grouped_2[[sample_var]]))
+    }
     colors_all <- get_default_colors(groups)
   }
 

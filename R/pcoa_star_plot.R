@@ -156,7 +156,11 @@ plot_pcoa_star <- function(physeq, sample_var, colors_all, view_type = "together
 
   # Handle default colors if missing
   if (missing(colors_all)) {
-    groups <- as.character(unique(pcoa_stats[[sample_var]]))
+    if (is.factor(pcoa_stats[[sample_var]])) {
+      groups <- levels(pcoa_stats[[sample_var]])
+    } else {
+      groups <- as.character(unique(pcoa_stats[[sample_var]]))
+    }
     colors_all <- get_default_colors(groups)
   }
 
