@@ -1,4 +1,4 @@
-# microbiomeplots
+# microbiomestar
 
 <!-- badges: start -->
 <!-- badges: end -->
