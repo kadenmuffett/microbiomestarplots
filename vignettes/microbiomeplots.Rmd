@@ -1,8 +1,8 @@
 ---
-title: "Introduction to microbiomeplots"
+title: "Introduction to microbiomestar"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Introduction to microbiomeplots}
+  %\VignetteIndexEntry{Introduction to microbiomestar}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -21,7 +21,7 @@ The `microbiomeplots` package provides an easy way to visualize complex microbio
 ## Setup
 
 ```{r setup, eval=FALSE}
-library(microbiomeplots)
+library(microbiomestar)
 library(phyloseq)
 library(dplyr)
 library(ggplot2)
