@@ -13,7 +13,7 @@ The `microbiomeplots` package provides unique visualization techniques for micro
 
 ## Installation
 
-You can install the development version of `microbiomeplots` from GitHub with:
+You can install the development version of `microbiomestar` from GitHub with:
 ``` r
 BiocManager::install("kadenmuffett/microbiomestarplots")
 ```
@@ -35,7 +35,7 @@ Provides a presence/absence comparison tool for assessing the core microbiome th
 ## Examples
 
 ```r
-library(microbiomeplots)
+library(microbiomestar)
 library(phyloseq)
 
 data("GlobalPatterns")
