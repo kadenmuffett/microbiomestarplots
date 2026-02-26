@@ -1,5 +1,5 @@
-Package: microbiomeplots
-Title: Microbiome Plots: A Package for Visualizing Compositional Starplots
+Package: microbiomestar
+Title: Microbiome Star: A Package for Visualizing Compositional Starplots
 Version: 0.0.1
 Authors@R: 
     person("Kaden", "Muffett", , "kmmuffett@gmail.com", role = c("aut", "cre"))
