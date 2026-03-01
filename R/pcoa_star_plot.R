@@ -12,7 +12,8 @@
 #'   Determines the type of error bars to display.
 #' @param fill_alpha A numeric value between 0 and 1 (default 0.4).
 #'   Controls the transparency of the polygon fill under the star plot.
-#' @param distance An accepted phyloseq ordination type ("bray" for example)
+#' @param distance An accepted phyloseq ordination type ("bray" for example). Required if `ord` is NULL.
+#' @param ord An optional existing ordination object (e.g., from \code{phyloseq::ordinate()}). If provided, ordination is skipped.
 #' @param plot_order A character vector for custom ordering of the sample variable, "hclust" for Ward's clustering based on Euclidean distance, or NULL (default) for alphabetical.
 #'
 #' @return A ggplot object representing the star plot of PCoA centroids.
@@ -38,7 +39,7 @@
 #' #     distance = "bray"
 #' #    )
 #' #
-plot_pcoa_star <- function(physeq, sample_var, colors_all, view_type = "together", error_bar = "IQR", fill_alpha = 0.4, distance, plot_order = NULL) {
+plot_pcoa_star <- function(physeq, sample_var, colors_all, view_type = "together", error_bar = "IQR", fill_alpha = 0.4, distance = NULL, ord = NULL, plot_order = NULL) {
   # --- 1. Input Validation ---
   if (!inherits(physeq, "phyloseq")) {
     stop("Error: 'physeq' must be a VALID phyloseq object.")
@@ -51,16 +52,22 @@ plot_pcoa_star <- function(physeq, sample_var, colors_all, view_type = "together
   error_bar <- match.arg(error_bar, c("IQR", "SE", "none"))
 
   # --- 2. Ordination (Bray-Curtis PCoA) ---
-  message("This package will ordinate samples with 0 total
+  if (is.null(ord)) {
+    if (is.null(distance)) {
+      stop("Error: 'distance' must be provided if 'ord' is NULL.")
+    }
+    message("This package will ordinate samples with 0 total
           reads/counts. Make sure you have removed all
           non-meaningful zeros and your data is
           appropriately transformed before starting.
-          Calculating Bray-Curtis dissimilarity (or your preferred) and
-          performing PCoA...")
+          Calculating dissimilarity and performing PCoA...")
 
-  # Calculate distance and ordinate
-  # Note: phyloseq::ordinate can handle distance calculation internally but explicit is often clearer
-  ord <- phyloseq::ordinate(physeq, method = "PCoA", distance = paste0(sym(distance)))
+    # Calculate distance and ordinate
+    # Note: phyloseq::ordinate can handle distance calculation internally but explicit is often clearer
+    ord <- phyloseq::ordinate(physeq, method = "PCoA", distance = paste0(sym(distance)))
+  } else {
+    message("Using provided ordination object...")
+  }
 
   # Extract the first 5 axes
   # The points (site scores) are in ord$vectors

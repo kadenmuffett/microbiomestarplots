@@ -14,6 +14,8 @@
 #' @param error_bar A character string, one of "IQR" (default), "SE", or "none".
 #'   Determines the type of error bars to display.
 #' @param samplecolumn This is the ID column for your samples.
+#' @param view_type A character string, either "separate" (default) or "together".
+#'   Determines whether groups are plotted on the same plot or faceted.
 #' @param fill_alpha A numeric value between 0 and 1 (default 0.4).
 #'   Controls the transparency of the polygon fill under the star plot.
 #' @param log_scale A logical value. If TRUE, applies a pseudo-log transformation to the y-axis.
@@ -36,6 +38,7 @@
 #' #     taxa_rank = "Phylum",
 #' #     # taxa_names = c("Firmicutes", "Bacteroidetes"), # Optional
 #' #     samplecolumn = "Sample_ID",
+#' #     view_type = "separate",
 #' #     error_bar = "SE",
 #' #     fill_alpha = 0.2,
 #' #     log_scale = FALSE,
@@ -49,7 +52,7 @@
 #' #   ...
 #' #   error_bar = "none"
 #' # )
-plot_taxa_star <- function(physeq, sample_var, taxa_rank = "OTU", taxa_names = NULL, colors_all, samplecolumn, error_bar = "IQR", fill_alpha = 0.4, log_scale = FALSE, plot_order = NULL) {
+plot_taxa_star <- function(physeq, sample_var, taxa_rank = "OTU", taxa_names = NULL, colors_all, samplecolumn, view_type = "separate", error_bar = "IQR", fill_alpha = 0.4, log_scale = FALSE, plot_order = NULL) {
   # --- 1. Input Validation and Conversion ---
 
   # Check if input is a data frame and convert to phyloseq if necessary
@@ -129,6 +132,7 @@ plot_taxa_star <- function(physeq, sample_var, taxa_rank = "OTU", taxa_names = N
     stop("Error: '", taxa_rank, "' is not a valid taxonomic rank in the phyloseq object.")
   }
 
+  view_type <- match.arg(view_type, c("together", "separate"))
   error_bar <- match.arg(error_bar, c("IQR", "SE", "none"))
 
   # --- 2. Data Transformation ---
@@ -244,8 +248,11 @@ plot_taxa_star <- function(physeq, sample_var, taxa_rank = "OTU", taxa_names = N
       y = "Relative Abundance",
       color = "Sample"
     ) +
-    coord_radar() +
-    facet_wrap(as.formula(paste("~", sample_var)))
+    coord_radar()
+
+  if (view_type == "separate") {
+    star_plot <- star_plot + facet_wrap(as.formula(paste("~", sample_var)))
+  }
 
   # Add Error Bars conditionally
   if (error_bar == "IQR") {
