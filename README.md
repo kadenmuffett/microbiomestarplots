@@ -1,17 +1,19 @@
-# microbiomeplots
+# microbiomestar
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-The `microbiomeplots` package provides unique visualization techniques for microbiome data using `phyloseq` and `microViz`. Its flagship features involve replacing standard points or bars with "star" (radar) plots that show the relative abundance of core taxa or any taxa of interest. These multi-dimensional shapes can be projected onto PCoA plots or arranged in core matrices to easily visualize differences in community structures across samples or treatments (up to 4 groups/treatments for comparative core matrices).
+The `microbiomestar` package provides unique visualization techniques for microbiome data using `phyloseq` and `microViz`. Its flagship features involve replacing standard points or bars with "star" (radar) plots that show the relative abundance of core taxa or any taxa of interest. These multi-dimensional shapes can be projected onto PCoA plots or arranged in core matrices to easily visualize differences in community structures across samples or treatments (up to 4 groups/treatments for comparative core matrices).
+
+<img width="1315" height="747" alt="image" src="https://github.com/user-attachments/assets/89dd71a7-bb12-43b5-979c-83a2a9a43128" />
+*PCoA axes plotted using data from the GlobalPatterns dataset (plot_pcoa_star())*
+
 
 ## Installation
 
-You can install the development version of `microbiomeplots` from GitHub with:
-As an alternative, you can install with BiocManager.
+You can install the development version of `microbiomestar` from GitHub with:
 ``` r
-# install.packages("devtools")
-devtools::install_github("kadenmuffett/microbiomestarplots")
+BiocManager::install("kadenmuffett/microbiomestarplots")
 ```
 
 ## Features
@@ -31,7 +33,7 @@ Provides a presence/absence comparison tool for assessing the core microbiome th
 ## Examples
 
 ```r
-library(microbiomeplots)
+library(microbiomestar)
 library(phyloseq)
 
 data("GlobalPatterns")
